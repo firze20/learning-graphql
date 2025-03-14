@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    container_name: graphql_api
+    build: .
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: "mongodb://mongo:27017/graphql"
+    command: ["npm", "run", "dev"]  # Ensure the container runs the correct command
+
+  mongo:
+    container_name: graphql_mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db

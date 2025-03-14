@@ -1,0 +1,8 @@
+{
+    "name": "GraphQL Dev",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "api",
+    "workspaceFolder": "/usr/src/app",
+    "forwardPorts": [4000, 27017],
+    "postCreateCommand": "npm install"
+  }
