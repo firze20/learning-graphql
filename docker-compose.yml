@@ -19,6 +19,6 @@ services:
     container_name: graphql_mongo
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27018:27017"
     volumes:
       - ./data:/data/db
