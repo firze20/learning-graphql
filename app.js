@@ -1,4 +1,6 @@
 const express = require("express");
+const graphqlHTTP = require("graphql-http");
+
 const app = express();
 
 // Get the Mongoose models for querying the database
@@ -11,23 +13,21 @@ app.get("/", (req, res) => {
   res.send("Server is running!");
 });
 
-app.get("/users/:id", (req, res) => {
-  const { id } = req.params;
-
-  // Find the user with the given ID
-  User.findById(id, (err, user) => {
-    if (err) {
-      // The DB returned an error so we return a 500 error 
-      res.status(500).send("Error querying the database");
-    }
-
+app.get("/users/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Find the user with the given ID
+    const user = await User.findById(id);
     if (!user) {
-      res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     }
-
-    // Return the user to client automatically serialized as JSON
+    // Send the user back as a response
     res.send(user);
-  });
+  } catch (err) {
+    // Log the error to the console
+    console.error(err);
+    res.status(500).send("An error occurred while trying to find the user");
+  }
 });
 
 // Start the server

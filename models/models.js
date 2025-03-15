@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Connect to the local MongoDB database named "guide"
 
-mongoose.connect('mongodb://localhost/guide')
+mongoose.connect('mongodb://graphql_mongo:27017/guide')
 
 // Create a User schema to be stored in the MongoDB database
 
