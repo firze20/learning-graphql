@@ -46,5 +46,6 @@ Open `http://localhost:4000` it will open **GraphiQL Ruru Server**
 
 __Demo:__
 
-<video controls src="graphiql.mov" title="GraphiQL Demo"></video>
+https://github.com/user-attachments/assets/c81d0252-119e-40c1-b575-6503be838caa
+
 
