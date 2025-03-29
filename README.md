@@ -42,7 +42,7 @@ This repo is for following GraphQL guide book
 
 ## Express Server
 
-Open `http://localhost:4000` it will open **GraphiQL Ruru Server**
+Open `http://localhost:4000/graphql` 🚀 it will open **Apollo Server**
 
 __Demo:__
 
@@ -163,3 +163,26 @@ Response:
   }
 }
 ```
+
+# Chapter 3: Query Language
+
+- Operations
+- Document
+- Selection sets
+- Fields
+- Arguments
+- Variables
+- Field aliases
+- Fragments
+  - Named Fragments 
+    - Type conditions
+  - Inline fragments
+- Directives
+  - `@skip`
+  - `@include`
+  - `@deprecated`
+- Mutations
+- Subscriptions
+- Summary 
+
+
