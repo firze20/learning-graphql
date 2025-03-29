@@ -15,15 +15,15 @@ const PORT = 4000;
 // The user query takes an id argument and returns a single User
 // The users query returns an array of all User objects
 const schema = buildSchema(`
+  type Group {
+    _id: String
+    name: String
+  }
+
   type User {
     _id: String
     username: String
     group: Group
-  }
-
-  type Group {
-    _id: String
-    name: String
   }
   
   type Query {
@@ -54,10 +54,11 @@ app.get('/', (req, res) => {
 app.all("/graphql", createHandler({ 
   schema, 
   rootValue,
+  
 }));
 
 
 // Start the application, listenning on port 4000
 app.listen(PORT, () => {
-  console.log(`GraphQL is running on http://localhost:${PORT}/graphql`);
+  console.log(`GraphQL is running on http://localhost:${PORT}`);
 });
