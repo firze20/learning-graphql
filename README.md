@@ -63,6 +63,103 @@ __In this chapter I switched to Apollo Server__
 
 ![Apollo Server](apollo-server.png)
 
+# Chapter 2 Multiple types of data
 
+```graphql
+query ExampleQuery($groupId: String!, $userId: String) {
+  users {
+    _id
+    username
+    group {
+      _id
+      name
+    }
+  }
+  groups {
+    _id
+    name
+  }
+  group(id: "author") {
+    _id
+    name
+  }
+  user(id: "4") {
+    _id
+    username
+    group {
+      name
+    }
+  }
+}
+```
 
-
+Response:
+```json
+{
+  "data": {
+    "users": [
+      {
+        "_id": "1",
+        "username": "user1",
+        "group": {
+          "_id": "dev",
+          "name": "Developers"
+        }
+      },
+      {
+        "_id": "2",
+        "username": "user2",
+        "group": {
+          "_id": "dev",
+          "name": "Developers"
+        }
+      },
+      {
+        "_id": "3",
+        "username": "Shrek",
+        "group": {
+          "_id": "dev",
+          "name": "Developers"
+        }
+      },
+      {
+        "_id": "4",
+        "username": "Batman",
+        "group": {
+          "_id": "dev",
+          "name": "Developers"
+        }
+      },
+      {
+        "_id": "5",
+        "username": "Pikachu",
+        "group": {
+          "_id": "dev",
+          "name": "Developers"
+        }
+      }
+    ],
+    "groups": [
+      {
+        "_id": "author",
+        "name": "Authors"
+      },
+      {
+        "_id": "dev",
+        "name": "Developers"
+      }
+    ],
+    "group": {
+      "_id": "author",
+      "name": "Authors"
+    },
+    "user": {
+      "_id": "4",
+      "username": "Batman",
+      "group": {
+        "name": "Developers"
+      }
+    }
+  }
+}
+```

@@ -33,6 +33,7 @@ const typeDefs = `#graphql
   type Query {
     user(id: String): User
     users: [User]
+    group(id: String!): Group
     groups: [Group]
   }
 `;
@@ -45,6 +46,9 @@ const resolvers = {
     },
     async users() {
       return await User.find();
+    },
+    async group(_, { id }) {
+      return await Group.findById(id);
     },
     async groups() {
       return await Group.find();
