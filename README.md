@@ -59,6 +59,10 @@ After assign all users to a specific group, by creating a field called `groupId`
 
 ![Users Collection](users-collection.png)
 
+__In this chapter I switched to Apollo Server__
+
+![Apollo Server](apollo-server.png)
+
 
 
 
