@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
+import { connect, model } from 'mongoose';
 // Schemas to be turned into models
-const UserSchema = require('./user.model');
-const GroupSchema = require('./group.model');
+import UserSchema from './user.model.js';
+import GroupSchema from './group.model.js';
 
-mongoose.connect('mongodb://graphql_mongo:27017/guide');
+connect('mongodb://graphql_mongo:27017/guide');
 
-const Group = mongoose.model('Group', GroupSchema);
+const Group = model('Group', GroupSchema);
 
 // Retrieve the group associated with the user
 UserSchema.methods.group = function() {
@@ -13,7 +13,7 @@ UserSchema.methods.group = function() {
     return Group.findById(this.groupId).exec();
 }
 
-const User = mongoose.model('User', UserSchema);
+const User = model('User', UserSchema);
 
 
-module.exports = { User, Group };
+export default { User, Group };
