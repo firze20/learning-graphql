@@ -279,9 +279,47 @@ mutation ViewedSectionTwo {
 
 ## Arguments
 
+On the server, a field is like a function that returns a value. Fields can have _[arguments](https://spec.graphql.org/draft/#sec-Language.Arguments)_: named values that are provided to the field function and change how it behaves. In this example, the `user` field has an `id` argument, and `profilePic` has `width` and `height` arguments:
+```graphql
+{
+  user(id: 1) {
+    name
+    profilePic(width: 100, height: 50)
+  }
+}
+```
 
+Arguments can appear in any order.
 
 ## Variables
+
+
+
+We often don’t know argument values until our code is being run—for instance, we won’t always want to query for user #1. The user ID we want will depend on which profile page we’re displaying. While we could edit the document at runtime (like `{ user(id: ' + currentPageUserId + ') { name }}'`), we recommend instead using static strings and _[variables](https://spec.graphql.org/draft/#sec-Language.Variables)_. __Variables__ are declared in the document, and their values are provided separately, like this:
+```graphql
+query UserName($id: Int!) { 
+  user(id: $id) {
+    name
+  }
+}
+
+{
+  "id": 2
+}
+```
+
+After the operation name, we declare `($id: Int!)`: the name of the variable with a `$` and the type of the __variable__. `Int` is an `integer` and `!` means non-null (required). Then, we use the variable name `$id` in an argument in place of the value: `user(id: 2) => user(id: $id)`. Finally, we send a __JSON__ object with variable values along with the query document.
+We can also give variables default values, for instance:
+```graphql
+query UserName($id: Int = 1) { 
+  user(id: $id) {
+    name
+  }
+}
+```
+
+If `$id` isn’t provided, `1` will be used.
+
 
 ## Field aliases
 
