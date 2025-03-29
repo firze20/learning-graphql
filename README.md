@@ -166,23 +166,153 @@ Response:
 
 # Chapter 3: Query Language
 
-- Operations
-- Document
-- Selection sets
-- Fields
-- Arguments
-- Variables
-- Field aliases
-- Fragments
-  - Named Fragments 
-    - Type conditions
-  - Inline fragments
-- Directives
-  - `@skip`
-  - `@include`
-  - `@deprecated`
-- Mutations
-- Subscriptions
-- Summary 
+- [Operations](#operations)
+- [Document](#document)
+- [Selection sets](#selection-sets)
+- [Fields](#fields)
+- [Arguments](#arguments)
+- [Variables](#variables)
+- [Field aliases](#field-aliases)
+- [Fragments](#fragments)
+  - [Named Fragments](#named-fragments) 
+    - [Type conditions](#type-conditions)
+  - [Inline fragments](#inline-fragments)
+- [Directives](#directives)
+  - [`@skip`](#skip)
+  - [`@include`](#include)
+  - [`@deprecated`](#deprecated)
+- [Mutations](#mutations)
+- [Subscriptions](#subscriptions)
+- [Summary](#summary) 
+
+## Operations
+
+__Operations__
+GraphQL is a specification for communicating with the server. We communicate with it—asking for data and telling it to do things—by sending _[operations](https://spec.graphql.org/draft/#sec-Language.Operations)_. There are three types of operations:
+- `query` fetches data
+- `mutation` changes and fetches data
+- `subscription` tells the server to send data whenever a certain event occurs
+
+__Operations__ can have names, like __AllTheStars__ in this query operation:
+```graphql
+query AllTheStars {
+  githubStars
+}
+```
+
+## Document
+
+Similar to how we call a `JSON` file or `string` a `JSON` document, a GraphQL file or string is called a GraphQL _[document](https://spec.graphql.org/draft/)_. There are two types of GraphQL documents—executable documents and schema documents. In this chapter, we’ll mainly be discussing executable documents. An executable document is a list of one or more operations or [fragments](#fragments). Here’s a document with a query operation:
+```graphql
+query {
+  githubStars
+}
+```
+
+Our operation has a single root field, __githubStars__. In this type of document—a single query operation without [variables]() or [directives](#directives)—we can omit query, so the above document is equivalent to:
+
+```graphql
+{
+  githubStars
+}
+```
+
+A more complex document could be:
+
+```graphql
+query StarsAndChapter {
+  githubStars
+  chapter(id: 0) {
+    title
+  }
+}
+
+mutation ViewedSectionOne {
+  viewedSection(id: "0-1") {
+    ...sectionData
+  }
+}
+
+mutation ViewedSectionTwo {
+  viewedSection(id: "0-2") {
+    ...sectionData
+  }
+}
+
+fragment sectionData on Section {
+  id
+  title
+}
+
+subscription StarsSubscription {
+  githubStars
+}
+```
+
+It has all the operation types as well as a fragment. __Note__ that when we have more than one __operation__, we need to give each a name—in this case, __StarsAndChapter__, __ViewedSection__, and __StarsSubscription__.”
+
+## Selection sets
+
+The content between a pair of curly braces is called a [selection set](https://spec.graphql.org/draft/#sec-Selection-Sets)—the list of data fields we’re requesting. For instance, the __StarsAndChapter__ selection set lists the __githubStars__ and __chapter__ fields:
+
+```graphql
+{
+  githubStars
+  chapter(id: 0) {
+    title
+  }
+}
+```
+
+And chapter has its own selection set: `{ title }`.
+
+## Fields
+
+A [field](https://spec.graphql.org/draft/) is a piece of information that can be requested in a selection set. In the above query, `githubStars`, `chapter`, and `title` are all fields. The first two are top-level fields (in the outer selection set, at the first level of indentation), and they’re called root query fields. Similarly, viewedSection in the document below is a root mutation field:
+```graphql
+mutation ViewedSectionTwo {
+  viewedSection(id: "0-2") {
+    ...sectionData
+  }
+}
+```
+
+## Arguments
+
+
+
+## Variables
+
+## Field aliases
+
+## Fragments
+
+### Named Fragments
+
+#### Type conditions
+
+### Inline Fragments
+
+## Directives
+
+### `@skip`
+
+### `@include`
+
+### `@deprecated`
+
+## Mutations
+
+## Subscriptions
+
+## Summary 
+
+
+
+
+
+
+
+
 
 
