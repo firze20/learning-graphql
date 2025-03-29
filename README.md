@@ -49,3 +49,16 @@ __Demo:__
 https://github.com/user-attachments/assets/c81d0252-119e-40c1-b575-6503be838caa
 
 
+# Chapter 1 Async Data Loading
+
+1 - Create a new collection called `groups`, like this:
+
+![Groups Collection](groups-collection.png)
+
+After assign all users to a specific group, by creating a field called `groupId`. 
+
+![Users Collection](users-collection.png)
+
+
+
+
