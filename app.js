@@ -18,6 +18,12 @@ const schema = buildSchema(`
   type User {
     _id: String
     username: String
+    group: Group
+  }
+
+  type Group {
+    _id: String
+    name: String
   }
   
   type Query {
