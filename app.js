@@ -6,7 +6,7 @@ const express = require("express");
 const app = express();
 
 // Get the Mongoose models for querying the database
-const { User } = require("./models/models");
+const { User } = require("./models");
 
 const PORT = 4000;
 
