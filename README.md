@@ -65,7 +65,6 @@ __In this chapter I switched to Apollo Server__
 
 # Chapter 2 Multiple types of data
 
-<pre>
 ```graphql
 uery ExampleQuery($groupId: String!, $userId: String) {
   users {
@@ -93,7 +92,6 @@ uery ExampleQuery($groupId: String!, $userId: String) {
   }
 }
 ```
-</pre>
 
 Response:
 ```json
