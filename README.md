@@ -66,7 +66,7 @@ __In this chapter I switched to Apollo Server__
 # Chapter 2 Multiple types of data
 
 ```graphql
-uery ExampleQuery($groupId: String!, $userId: String) {
+query ExampleQuery($groupId: String!, $userId: String) {
   users {
     _id
     username
