@@ -1,0 +1,13 @@
+# user.graphql
+
+ type User {
+    _id: String
+    username: String
+    group: Group
+}
+
+extend type Query {
+    user(id: String): User
+    users: [User]
+}
+
