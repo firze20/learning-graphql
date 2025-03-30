@@ -2,7 +2,7 @@
     _id: String
     name: String
 }
-
+ 
 extend type Query {
     group(id: String): Group
     groups: [Group]

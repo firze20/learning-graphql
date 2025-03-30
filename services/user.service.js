@@ -1,4 +1,4 @@
-import Models from "../models/index";
+import Models from "../models/index.js";
 
 const {User} = Models;
 

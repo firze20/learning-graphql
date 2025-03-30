@@ -1,6 +1,6 @@
-import { UserService } from "../../services/user.service";
+import { UserService } from "../../services/user.service.js";
 
-export const userResolvers = {
+export default {
     Query: {
         user: (_, { id }) => UserService.getUserById(id),
         users: () => UserService.getUsers()
