@@ -594,7 +594,98 @@ To recap the GraphQL query language, we can send one or more operations in a Gra
 - Use [mutations](#mutations) to alter data.
 - Use [subscriptions](#subscriptions) to receive events from the server.
 
+# Chapter 3: Type System
 
+Chapter contents:
+- Schema
+- Types
+- Descriptions
+- Scalars
+- Enums
+- Objects
+- Interfaces
+- Unions
+- Lists
+- Non-null
+- Field arguments
+  - Input objects
+- Directives
+- Extending
+- Introspection
+- Summary
+
+# Schema
+
+The [schema](https://spec.graphql.org/draft/#sec-Schema) defines the capabilities of a GraphQL server. It defines the possible queries, mutations, subscriptions, and additional types and directives. While the schema can be written in a programming language, it is often written in SDL (the GraphQL Schema Definition Language). Here is the most basic schema, written in SDL:
+
+```graphql
+schema {
+  query: Query
+}
+
+type Query {
+  hello: String
+}
+```
+
+It has a single root query field, `hello`, of type String(when we send a `hello` query, the server will return a string value). We can omit the `schema` declaration when we use operation types named `Query`, `Mutation`, and `Subcription`, so the above is equivalent to:
+
+```graphql
+type Query {
+  hello: String
+}
+```
+
+With this schema, the client can make the below query:
+```graphql
+query {
+  hello
+}
+```
+
+and receive this response:
+
+```graphql
+{
+  "data": {
+    "hello": "world!"
+  }
+}
+```
+
+The root fields-those listed under `type Query {...}`, `type Mutation { ... }`, and `type Subscription { ... }` are the entry points to our schema-the fields that can be selected by the client at the root level of an operation.
+
+# Types
+
+There are 
+
+# Descriptions
+
+# Scalars
+
+# Enums
+
+# Objects
+
+# Interfaces
+
+# Unions
+
+# Lists
+
+# Non-null
+
+# Field arguments
+
+## Input objects
+
+# Directives
+
+# Extending
+
+# Introspection
+
+# Summary
 
 
 
