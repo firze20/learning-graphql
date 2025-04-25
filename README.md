@@ -597,22 +597,22 @@ To recap the GraphQL query language, we can send one or more operations in a Gra
 # Chapter 3: Type System
 
 Chapter contents:
-- Schema
-- Types
-- Descriptions
-- Scalars
-- Enums
-- Objects
-- Interfaces
-- Unions
-- Lists
-- Non-null
-- Field arguments
-  - Input objects
-- Directives
-- Extending
-- Introspection
-- Summary
+- [Schema](#schema)
+- [Types](#types)
+- [Descriptions](#descriptions)
+- [Scalars](#scalars)
+- [Enums](#enums)
+- [Objects](#objects)
+- [Interfaces](#interfaces)
+- [Unions](#unions)
+- [Lists](#lists)
+- [Non-null](#non-null)
+- [Field arguments](#field-arguments)
+  - [Input objects](#input-objects)
+- [Directives](#directives)
+- [Extending](#extending)
+- [Introspection](#introspection)
+- [Summary](#summary)
 
 # Schema
 
@@ -645,7 +645,7 @@ query {
 
 and receive this response:
 
-```graphql
+```json
 {
   "data": {
     "hello": "world!"
@@ -657,27 +657,432 @@ The root fields-those listed under `type Query {...}`, `type Mutation { ... }`, 
 
 # Types
 
-There are 
+There are six named types and two wrapping types. The named types are:
+
+- Scalar
+- Enum
+- Object
+- Input object
+- Interface
+- Union 
+
+If you think of a GraphQL query as a tree, starting at the root field and branching out, the leaves are either scalars or enums. They're the fields without selection sets of their own.
+
+The two wrapping types are:
+
+- List
+- Non-null
+
+When the named types appear by themselves, they are singular and nullable--i.e., when the client requests a field, the server will return either one item or `null`. These two wrapping types change this default behavior.
 
 # Descriptions
 
+We can add a [description](https://spec.graphql.org/draft/#sec-Descriptions) before any definition in our schema using `#`, `"`. or `"""`. Descriptions are included in [introspection](#introspection) and displayed by tools like GraphiQL.
+
+```graphql
+type Query {
+  # have the server say hello to whomever you want!
+  hello(
+    "person to say hello to"
+    name: String!
+  ): String
+}
+
+"""
+multiline comment
+describing
+the User type
+"""
+
+type User {
+  id: Int
+  email: String 
+}
+```
+
 # Scalars
+
+[Scalars](https://graphql.org/learn/schema/#scalar-types) are primitive values. There are five included scalar types:
+
+- `Int`: Signed 32-bit non-fractional number. Maximum value around 2 billion (2,147,483,647)
+- `Float`: Signed [double-precision](https://en.wikipedia.org/wiki/Double-precision_floating-point_format) (64-bit) fractional value.
+- `String`: Sequence of [UTF-8](https://en.wikipedia.org/wiki/UTF-8) (8-bit Unicode) characters.
+- `Boolean`: `true` or `false`.
+- `ID`: Unique identifier, serialized as string.
+
+We can also define our own scalars, like `Url` and `DateTime`. In the description of our custom scalars, we write how they're serialized so the frontend developer knows what value to provide for arguments. For instance, `DateTime` could be serialized as an integer (miliseconds since Epoch) or as an ISO string:
+
+```graphql
+# schema
+
+type Mutation {
+  dayOfTheWeek(when: DateTime): String
+}
+```
+
+```graphql
+# if DateTime is serialized as an integer
+mutation {
+  dayOfTheWeek(when: 1591028749941)
+}
+
+# if DateTime is serialized as an ISO string
+mutation {
+  dayOfTheWeek(when: "2020-06-01T16:25:49.941Z")
+}
+```
+
+The benefits to using custom scalars are clarity(`when: DateTime` is clearer than `when: Int`) and consisten validation (whatever value we pass is checked to make sure it's a valid DateTime).
 
 # Enums
 
+When a scalar field has a small set of possible values, it's best to use an enum insteand. The enum type declaration lists all the options:
+
+```graphql
+enum Direction {
+  NORTH
+  EAST
+  SOUTH
+  WEST
+}
+```
+
+Enums are usually serialized as strings (for example, `"NORTH"`). Here's an example Query type, query operation, and response:
+
+```graphql
+type Query {
+  currentHeading(flightId: ID): Direction
+}
+```
+
+```graphql
+query {
+  currentHeading(flightId: "abc")
+}
+```
+
+response: 
+
+```json
+{
+  "data": {
+    "currentHeading": "NORTH"
+  }
+}
+```
+
 # Objects
+
+An object is a list of fields, each of which have a name and a type. The below schema defines two object types, `Post` and `User`:
+
+```graphql
+type Post {
+  id: ID
+  text: String
+  author: User
+}
+
+type User {
+  id: ID
+  name: String
+}
+```
+
+A field's type can be anything but an input object. In the `Post` type, the `id` and `text` fields are scalars, while `author` is an object type.
+
+When selecting a field that has an object type, at least one of that object's fields must be selected. For instance, in the below schema, `post` field is of type `Post`:
+
+```graphql
+type Query {
+  post(id: ID): Post
+}
+```
+
+Since `Post` is an object type, at least one `Post` field must be selected in query A below--in this case, `text`. And in query B, `post.author` is of type `User`, so at least one `User` field must be selected.
+
+```graphql
+query A {
+  post(id: "abc") {
+    text
+  }
+}
+
+query B {
+  post(id: "abc") {
+    author {
+      name
+    }
+  }
+}
+
+In other words, we have to keep adding selection sets until we only have leaves (scalars and enums) left. Objects are the branches on the way to the leaves.
+```
 
 # Interfaces
 
+[Interfaces](https://graphql.org/learn/schema/#interfaces) define a list of fields that must be included in any object types implementing them. For instance, here are two interfaces, `BankAccount` and `InsuredAccount`, and and an object type that implements them, `CheckingAccount`:
+
+```graphql
+interface BankAccount {
+  accountNumber: String!
+}
+
+interface InsuredAccount {
+  insuranceName: String
+  insuranceAmount: Int!
+}
+
+type CheckingAccount implements BankAccount & InsuredAccount {
+  accountNumber: String!
+  insuranceName: String
+  insuranceAmount: Int!
+  routingNumber: String!
+}
+```
+
+Since `CheckingAccount` implements both interfaces, it must include the fields from both. It can also include additional fields, like `routingNumber`.
+
+Interfaces can implement other interfaces, like this:
+
+```graphql
+interface InvestmentAccount implements BankAccount {
+  accountNumber: String!
+  marginApproved: Boolean!
+}
+
+type RetirementAccount implements InvestmentAccount {
+  accountNumber: String!
+  marginApproved: Boolean!
+  contributionLimit: Int!
+}
+```
+
+Interfaces are helpful for clarity and consistency in the schema, but they're also useful as field types:
+
+```graphql
+type Query {
+  user(id: ID!): User
+}
+
+type User {
+  id: ID!
+  name: String!
+  accounts: [BankAccount]
+}
+```
+
+We can now query for fields in `BankAccount`
+
+```graphql
+query {
+  user(id: "abc") {
+    name
+    accounts {
+      accountNumber: String!
+    }
+  }
+}
+```
+
+And if we want to query fields outside `BankAccount`, we can use a fragment:
+
+```graphql
+query {
+  user(id: "abc") {
+    name
+    accounts {
+      accountNumber: String!
+      ... on RetirementAccount {
+        marginaApproved
+        contributionLimit
+      }
+    }
+  }
+}
+```
+
 # Unions
+
+A [union](https://spec.graphql.org/draft/#sec-Unions) type is defined as a list of object types:
+
+```graphql
+union SearchResult = User | Post
+
+type User {
+  name: String
+  profilePic: Url
+}
+
+type Post {
+  text: String
+  upvotes: Int
+}
+```
+
+When a field is typed as a union, its value can be any of the objects listed in the union definition. So the below `search` query returns a list of `User` and `Post` objects.
+
+```graphql
+type Query {
+  search(term: String): SearchResult
+}
+```
+
+```graphql
+query {
+  search(term: "John") {
+    ... on User {
+      name
+    }
+    ... on Post {
+      text
+    }
+  }
+}
+```
+
+Since unions don't guarantee any fields in common, any field we select has to be inside a fragment (which have a specific object type).
 
 # Lists
 
+[List](https://spec.graphql.org/draft/) is wrapper type. It wraps another type and signifies an ordered list in which each item is of the wrapped type.
+
+```graphql
+type User {
+  names: [String]
+}
+```
+
+The `User.names` field could be any of these values:
+
+```graphql
+null
+[]
+[null]
+["Loren"]
+["Loren", null, "L", "Lolo"]
+```
+
+We can also nest lists, like `Spreadsheet.cells`:
+
+```graphql
+type Spreadsheet {
+  columns: [String]
+  rows: [String]
+  cells: [[Int]]
+}
+```
+
+For example:
+
+```json
+{
+  "columns": ["Revenue", "Expenses"],
+  "rows": ["Jan", "Feb", "March"],
+  "cells": [[100, 110], [200, 100], [300, 50]]
+}
+```
+
 # Non-null
+
+[Non-null](https://graphql.org/learn/schema/#lists-and-non-null) is a wrapper type. It wraps any other type and signifies that type can't be null.
+
+```graphql
+type User {
+  name: String!
+}
+```
+
+If we select `User.name` in a query:
+
+```graphql
+query {
+  user(id: "abc") {
+    name
+  }
+}
+```
+
+then we will never get this response:
+
+```json
+{
+  "data": {
+    "user": {
+      "name": null
+    }
+  }
+}
+```
+
+These two responses are valid:
+
+```json
+{
+  "data": {
+    "user": {
+      "name": "Loren"
+    }
+  }
+}
+```
+
+```json
+{
+  "data": {
+    "user": {
+      "name": null
+    }
+  }
+}
+```
 
 # Field arguments
 
+Any field can accept a named, unordered list of [arguments]. Arguments can be scalars, enums, or input objects. An argument can be non-null to indicate it is required. Optional arguments can have a default value, like `name` below.
+
+```graphql
+type User {
+  # no arguments
+  name
+
+  # an optional scalar argument with a default value
+  profilePic(width: Int = 100): Url
+}
+
+type Mutation {
+  # a non-null enum argument
+  pokemonGo(direction: Direction!): Boolean
+
+  # three non-null scalar arguments
+  createPost(authorId: ID!, title: Sring!, body: String!): Post
+}
+```
+
 ## Input objects
+
+[Input objects](https://spec.graphql.org/draft/#sec-Input-Objects) are objects that are only used as arguments. An input object is often the sole argument to mutations.
+
+An input object is a list of input fields--scalars, enums, and other input objects.
+
+```graphql
+type Mutation {
+  createPost(input: CreatePostInput!): Post
+}
+
+input CreatePostInput {
+  authorId: ID!
+  title: String = "Untitled"
+  body: String!
+}
+```
+
+Note that:
+- Input objects fields can have default values.
+- The declaration keyword is `input`, not the `type` keyword that is used for output objects.
+
+
+
+
 
 # Directives
 
